@@ -7,7 +7,7 @@ Common scenario in the FOSS community:
 * GitHub does not allow GitHub Actions running from a forked repo to modify parent repo, even to post comments on its own PR.
 
 ## Workaround
-* [Pull request action](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/test.yml#L1)  creates a file with Github markup comment content, and saves it as an artifact under some name.  This action runs in the context of the forked repo, so it has no way to post.
+* [Pull request action](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/test.yml#L1)  creates an `.md` file with Github markdown comment content, and saves it as an artifact under some name.  This action runs in the context of the forked repo, so it has no way to post a PR comment.
 * A regular [cron job](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/pr_updater.yml#L1) looks at all of the open pull requests and recently completed action runs, looks for the posted artifacts, and copies their content as comments to the corresponding pull requests, updating existing comment on repeated runs.
 
 The code was written using a bash script with `curl` and `jq`, without any other libraries.
