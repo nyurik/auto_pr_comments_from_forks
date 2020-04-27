@@ -1,3 +1,5 @@
+TEST: DO NOT MERGE !!!
+
 This is a demo showing how to work around GitHub Actions limitation of CI jobs not being able to post comments to the upstream repo's pull requests. The same approach could be used for other actions that require upstream security access.  Use with care to avoid compromising your primary repo's security token.
 
 ## Problem
