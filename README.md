@@ -1,2 +1,28 @@
-# auto_pr_comments_from_forks
-Shows how to make GitHub actions post comments to pull requests from public fork repositories.
+This is a demo to show how to work around GitHub Actions limitation of not being able to post comments to the parent repo if the pull request comes from a forked repo.
+
+Common scenario in the FOSS community:
+* You want community to fork your repo and submit pull requests
+* You want your CI job to post run results as a comment to the pull request
+* GitHub does not allow GitHub Actions running from a forked repo to modify parent repo, even to post comments on its own PR.
+
+Workaround:
+* [Pull request action](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/test.yml#L1)  creates a file with Github markup comment content, and saves it as an artifact under some name.  This action runs in the context of the forked repo, so it has no way to post.
+* A regular [cron job](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/pr_updater.yml#L1) looks at all of the open pull requests and recently completed action runs, looks for the posted artifacts, and copies their content as comments to the corresponding pull requests, updating existing comment on repeated runs.
+
+The code was written using a bash script with `curl` and `jq`, without any other libraries.
+
+## Strategy
+
+[Implementation](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/pr_updater.yml#L1) of the cron's job:
+
+* get all open pull requests
+* get all recent workflow runs
+* match pull requests and their current SHA with the last workflow run for the same SHA
+* for each found match of  <pull-request-number>  and  <workflow-run-id> :
+  * download artifact from the workflow run -- expects a single file with markdown content
+  * look through existing PR comments to see if we have posted a comment before
+    (uses a hidden magical header to identify our comment)
+  * either create or update the comment with the new text (if changed)
+
+## Try it
+To test, fork this repo, make a modification, and submit a pull request.
