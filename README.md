@@ -8,13 +8,11 @@ Common scenario in the FOSS community:
 
 ## Workaround
 * [Pull request action](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/test.yml#L1)  creates an `.md` file with Github markdown comment content, and saves it as an artifact under some name.  This action runs in the context of the forked repo, so it has no way to post a PR comment.
-* A regular [cron job](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/pr_updater.yml#L1) looks at all of the open pull requests and recently completed action runs, looks for the posted artifacts, and copies their content as comments to the corresponding pull requests, updating existing comment on repeated runs.
+* A regular [cron job](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/pr_updater.yml#L1) looks at all the open pull requests and recently completed action runs, looks for the posted artifacts, and copies their content as comments to the corresponding pull requests, updating existing comment on repeated runs.
 
-The code was written using a bash script with `curl` and `jq`, without any other libraries.
+## Implementation and Testing
 
-## Strategy
-
-[Implementation](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/pr_updater.yml#L1) of the cron's job:
+The [code](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.github/workflows/pr_updater.yml#L1) was written using a bash script with `curl` and `jq`, without any other libraries. It is already running on this repo, and has created [this PR message](https://github.com/nyurik/auto_pr_comments_from_forks/pull/1). Feel free to test it further by forking this repository, creating a dummy change, and creating a pull request. The cron job performs these steps on each run:
 
 * get all open pull requests
 * get all recent workflow runs
@@ -25,5 +23,5 @@ The code was written using a bash script with `curl` and `jq`, without any other
     (uses a hidden magical header to identify our comment)
   * either create or update the comment with the new text (if changed)
 
-## Try it
-To test, fork this repo, make a modification, and submit a pull request.
+## Volunteers Needed
+It would be great if the same algorithm could be implemented as a proper packaged action, rather than a `curl+jq` hack :)
