@@ -1,4 +1,4 @@
-This is a demo to show how to work around GitHub Actions limitation of not being able to post comments to the parent repo if the pull request comes from a forked repo.
+This is a demo showing how to work around GitHub Actions limitation of CI jobs not being able to post comments to the upstream repo's pull requests. The same approach could be used for other actions that require upstream security access.  Use with care to avoid compromising your primary repo's security token.
 
 ## Problem
 Common scenario in the FOSS community:
