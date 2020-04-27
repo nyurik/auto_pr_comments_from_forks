@@ -17,7 +17,7 @@ The [code](https://github.com/nyurik/auto_pr_comments_from_forks/blob/master/.gi
 * get all open pull requests
 * get all recent workflow runs
 * match pull requests and their current SHA with the last workflow run for the same SHA
-* for each found match of  <pull-request-number>  and  <workflow-run-id> :
+* for each found match of  `<pull-request-number>`  and  `<workflow-run-id>` :
   * download artifact from the workflow run -- expects a single file with markdown content
   * look through existing PR comments to see if we have posted a comment before
     (uses a hidden magical header to identify our comment)
