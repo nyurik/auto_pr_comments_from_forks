@@ -112,7 +112,7 @@ jobs:
           # A match is based on "source repository + branch + SHA" key
           # In rare cases (e.g. force push to an older revision), there could be more than one match
           # for a given PR number, so just use the most recent one.
-          # Result is a bash style list (one per line) of  <pull_request_number> <job_number>  pairs
+          # Result is a table (list of lists) - each row with PR number, JOB ID, and the above key
           PR_JOB_MAP="$(jq --arg IGNORE_RUNS_OLDER_THAN "$IGNORE_RUNS_OLDER_THAN" '
               # second input is the pull request map - use it to lookup PR numbers
               input as $OPEN_PULL_REQUESTS
@@ -128,7 +128,7 @@ jobs:
                       # do not include  .conclusion=="success"  because errors could also post messages
                       success: (.status=="completed")
                   }
-                  # lookup PR number from $OPEN_PULL_REQUESTS based on the "key" ==> PR number
+                  # lookup PR number from $OPEN_PULL_REQUESTS using the above key
                   | . += { pr_number: $OPEN_PULL_REQUESTS[.key] }
                   # Remove runs that were not in the list of the PRs
                   | select(.pr_number)
