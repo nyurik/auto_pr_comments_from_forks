@@ -5,7 +5,7 @@ on:
   # When setting up for the first time, use "on: push" instead of "on: schedule"
   # and set IGNORE_RUNS_OLDER_THAN to a very high number until it runs once.
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/15 * * * *'
 
 jobs:
   pr_updater:
@@ -20,7 +20,7 @@ jobs:
           MSG_ARTIFACT_NAME: "pr_message"
           # How far back to look for finished runs, in minutes.
           # Set to 10-20 minutes higher than cron's job frequency set above.
-          IGNORE_RUNS_OLDER_THAN: 20
+          IGNORE_RUNS_OLDER_THAN: 30
           # How far back to look for updated pull requests, in minutes.
           # Should be bigger than IGNORE_RUNS_OLDER_THAN by the maximum time a pull request jobs may take
           IGNORE_PRS_OLDER_THAN: 80
