@@ -60,9 +60,8 @@ jobs:
           #   "nyurik/openmaptiles/nyurik-patch-1/4953dd2370b9988a7832d090b5e47b3cd867f594": 6,
           #   ...
           # }
-          OPEN_PULL_REQUESTS="$(
-            crl "$GITHUB_API/pulls?state=open&sort=updated&direction=desc" \
-            | jq --arg IGNORE_PRS_OLDER_THAN "$IGNORE_PRS_OLDER_THAN" '
+          OPEN_PULL_REQUESTS_RAW="$( crl "$GITHUB_API/pulls?state=open&sort=updated&direction=desc" )"
+          if ! OPEN_PULL_REQUESTS="$(jq --arg IGNORE_PRS_OLDER_THAN "$IGNORE_PRS_OLDER_THAN" '
               map(
                   # Only select open unlocked pull requests updated within last $IGNORE_PRS_OLDER_THAN minutes
                   select(.state=="open" and .locked==false
@@ -72,7 +71,12 @@ jobs:
                   | { key: (.head.repo.full_name + "/" + .head.ref + "/" + .head.sha), value: .number }
               )
               | from_entries
-            ')"
+            ' <( echo "$OPEN_PULL_REQUESTS_RAW" ) )"; then
+
+              echo "Error parsing open pull requests"
+              echo "$OPEN_PULL_REQUESTS_RAW"
+              exit 1
+          fi
 
           # Count how many pull requests we should process, and exit early if there are none
           PR_COUNT="$(jq 'length' <( echo "$OPEN_PULL_REQUESTS" ) )"
