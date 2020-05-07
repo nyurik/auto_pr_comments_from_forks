@@ -167,7 +167,7 @@ jobs:
           #
           # Iterate over the found pairs of PR number + run ID, and update them all
           #
-          echo "$PR_JOB_MAP" | jq -r '[ .pr_number, .id, .key ] | .[] | @sh' | \
+          echo "$PR_JOB_MAP" | jq -r '.[] | [ .pr_number, .id, .key ] | @sh' | \
           while read -r PR_NUMBER RUN_ID RUN_KEY; do
 
             echo "Processing '$WORKFLOW_NAME' run #$RUN_ID for pull request #$PR_NUMBER $RUN_KEY..."
