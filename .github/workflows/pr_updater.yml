@@ -63,7 +63,7 @@ jobs:
           #   "nyurik/openmaptiles/nyurik-patch-1/4953dd2370b9988a7832d090b5e47b3cd867f594": 6,
           #   ...
           # }
-          PULL_REQUESTS_RAW="$( crl "$GITHUB_API/pulls?sort=updated&direction=desc" )"
+          PULL_REQUESTS_RAW="$( auth_crl "$GITHUB_API/pulls?sort=updated&direction=desc" )"
           if ! PULL_REQUESTS="$(jq --arg IGNORE_PRS_OLDER_THAN "$IGNORE_PRS_OLDER_THAN" '
               map(
                   # Only select unlocked pull requests updated within last $IGNORE_PRS_OLDER_THAN minutes
@@ -96,7 +96,7 @@ jobs:
           #
           # Resolve workflow name into workflow ID
           #
-          WORKFLOW_ID="$(crl "$GITHUB_API/actions/workflows" \
+          WORKFLOW_ID="$(auth_crl "$GITHUB_API/actions/workflows" \
               | jq --arg WORKFLOW_NAME "$WORKFLOW_NAME" '
               .workflows[] | select(.name == $WORKFLOW_NAME) | .id
               ')"
@@ -114,7 +114,7 @@ jobs:
           #
 
           # Get all workflow runs that were triggered by pull requests
-          WORKFLOW_PR_RUNS="$(crl "$GITHUB_API/actions/workflows/${WORKFLOW_ID}/runs?event=pull_request")"
+          WORKFLOW_PR_RUNS="$(auth_crl "$GITHUB_API/actions/workflows/${WORKFLOW_ID}/runs?event=pull_request")"
 
           # For each workflow run, match it with the pull request to get the PR number
           # A match is based on "source repository + branch + SHA" key
@@ -171,7 +171,7 @@ jobs:
           while read -r PR_NUMBER RUN_ID RUN_KEY; do
 
             echo "Processing '$WORKFLOW_NAME' run #$RUN_ID for pull request #$PR_NUMBER $RUN_KEY..."
-            ARTIFACTS="$(crl "$GITHUB_API/actions/runs/$RUN_ID/artifacts")"
+            ARTIFACTS="$(auth_crl "$GITHUB_API/actions/runs/$RUN_ID/artifacts")"
 
             # Find the artifact download URL for the artifact with the expected name
             ARTIFACT_URL="$(jq -r --arg MSG_ARTIFACT_NAME "$MSG_ARTIFACT_NAME" '
@@ -205,7 +205,7 @@ jobs:
                 '{ body: ($COMMENT_MAGIC_HEADER + "\n" + ($MESSAGE | sub( "^[\\s\\p{Cc}]+"; "" ) | sub( "[\\s\\p{Cc}]+$"; "" ))) }' \
             )"
 
-            EXISTING_PR_COMMENTS="$(crl "$GITHUB_API/issues/$PR_NUMBER/comments")"
+            EXISTING_PR_COMMENTS="$(auth_crl "$GITHUB_API/issues/$PR_NUMBER/comments")"
 
             # Get the comment URL for the first comment that begins with the magic header, or empty string
             OLD_COMMENT="$(jq --arg COMMENT_MAGIC_HEADER "$COMMENT_MAGIC_HEADER" '
